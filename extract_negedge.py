@@ -2,14 +2,14 @@ import csv,sys
 import queue
 
 idx = 0
-posedge_term = 0
+negedge_term = 0
 threshold = 2.97
 can_dom_bit_idx = 0 # 0 to 2000
 can_res_bit_idx = 0 # 0 to 2000
 can_signal = []
 SOF = False
-POSEDGE = False
-posedge_q = queue.Queue()
+NEGEDGE = False
+negedge_q = queue.Queue()
 prev_can_signal_len = -1
 
 with open(sys.argv[1]) as f:
@@ -40,24 +40,24 @@ with open(sys.argv[1]) as f:
         elif can_dom_bit_idx >= 2000: 
             can_dom_bit_idx = 0
 
-        posedge_q.put(v_value)
-        if posedge_q.qsize() > 200:
-            posedge_q.get()
+        negedge_q.put(v_value)
+        if negedge_q.qsize() > 200:
+            negedge_q.get()
 
-            # extract posedge edge
+            # extract negedge edge
             try :
-                if posedge_q.queue[-1] - posedge_q.queue[0] >= 0.5 and prev_can_signal_len != len(can_signal) :
-                    POSEDGE = True
+                if negedge_q.queue[0] - negedge_q.queue[-1] >= 0.5 and prev_can_signal_len != len(can_signal) :
+                    NEGEDGE = True
                     #print(len(can_signal), posedge_q.queue[0], posedge_q.queue[-1])
                     prev_can_signal_len = len(can_signal)
-                if POSEDGE == True:
-                    posedge_term += 1
-                if posedge_term >= 50:
-                    for q_item in posedge_q.queue:
-                        print("Posedge Edge: ", q_item, len(can_signal))
-                    POSEDGE = False
-                    posedge_term = 0
-                    posedge_q.empty()
+                if NEGEDGE == True:
+                    negedge_term += 1
+                if negedge_term >= 50:
+                    for q_item in negedge_q.queue:
+                        print("Negedge Edge: ", q_item, len(can_signal))
+                    NEGEDGE = False
+                    negedge_term = 0
+                    negedge_q.empty()
                     print("=================================")
             except IndexError :
                 continue

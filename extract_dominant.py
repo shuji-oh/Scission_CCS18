@@ -52,9 +52,9 @@ with open(sys.argv[1]) as f:
                     prev_can_signal_len = len(can_signal)
                 if POSEDGE == True:
                     posedge_term += 1
-                if posedge_term >= 50:
+                if posedge_term >= 350:
                     for q_item in posedge_q.queue:
-                        print("Posedge Edge: ", q_item, len(can_signal))
+                        print("Dominant signals: ", q_item, len(can_signal))
                     POSEDGE = False
                     posedge_term = 0
                     posedge_q.empty()
