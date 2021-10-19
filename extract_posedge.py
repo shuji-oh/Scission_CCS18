@@ -4,6 +4,7 @@ from statistics import mean, median, variance, stdev
 from scipy.stats import skew, kurtosis
 from functools import reduce
 from math import sqrt
+import numpy as np
 
 def rms(xs):
     return sqrt(reduce(lambda a, x: a + x * x, xs, 0) / len(xs))
@@ -20,7 +21,7 @@ can_signal = []
 SOF = False
 POSEDGE = False
 posedge_q = queue.Queue()
-posedge_list = [[]]
+posedge_list = []
 prev_can_signal_len = -1
 
 with open(sys.argv[1]) as f:
@@ -64,25 +65,34 @@ with open(sys.argv[1]) as f:
                 if POSEDGE == True:
                     posedge_term += 1
                 if posedge_term >= 50:
-                    posedge_list.append(list(posedge_q.queue))
                     for q_item in posedge_q.queue:
-                        print("Posedge Edge: ", q_item, len(can_signal))
+                        posedge_list.append(q_item)
+                        #print("Posedge Edge: ", q_item, len(can_signal))
                     POSEDGE = False
                     posedge_term = 0
                     posedge_q.empty()
-                    print("=================================")
+                    #print("=================================")
             except IndexError :
                 continue
 
-print(len(posedge_list))
-for posedge in posedge_list:
-    print('{:.4f}'.format(mean(posedge)),\
-          '{:.4f}'.format(stdev(posedge)),\
-          '{:.4f}'.format(variance(posedge)),\
-          '{:.4f}'.format(skew(posedge)),\
-          '{:.4f}'.format(kurtosis(posedge)),\
-          '{:.4f}'.format(max(posedge)),\
-          '{:.4f}'.format(min(posedge)),\
-          '{:.4f}'.format(rms(posedge)),\
-          '{:.4f}'.format(en(posedge)),\
-    )
+# feature extraction
+fft_posedge_list = abs(np.fft.fft(posedge_list))
+print('{:.4f}'.format(mean(posedge_list)),\
+      '{:.4f}'.format(stdev(posedge_list)),\
+      '{:.4f}'.format(variance(posedge_list)),\
+      '{:.4f}'.format(skew(posedge_list)),\
+      '{:.4f}'.format(kurtosis(posedge_list)),\
+      '{:.4f}'.format(max(posedge_list)),\
+      '{:.4f}'.format(min(posedge_list)),\
+      '{:.4f}'.format(rms(posedge_list)),\
+      '{:.4f}'.format(en(posedge_list)),\
+      '{:.4f}'.format(mean(posedge_list)),\
+      '{:.4f}'.format(stdev(fft_posedge_list)),\
+      '{:.4f}'.format(variance(fft_posedge_list)),\
+      '{:.4f}'.format(skew(fft_posedge_list)),\
+      '{:.4f}'.format(kurtosis(fft_posedge_list)),\
+      '{:.4f}'.format(max(fft_posedge_list)),\
+      '{:.4f}'.format(min(fft_posedge_list)),\
+      '{:.4f}'.format(rms(fft_posedge_list)),\
+      '{:.4f}'.format(en(fft_posedge_list))
+)

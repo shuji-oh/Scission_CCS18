@@ -1,5 +1,16 @@
 import csv,sys
 import queue
+from statistics import mean, median, variance, stdev
+from scipy.stats import skew, kurtosis
+from functools import reduce
+from math import sqrt
+import numpy as np
+
+def rms(xs):
+    return sqrt(reduce(lambda a, x: a + x * x, xs, 0) / len(xs))
+
+def en(xs):
+    return reduce(lambda a, x: a + x * x, xs, 0) / len(xs)
 
 idx = 0
 negedge_term = 0
@@ -10,7 +21,7 @@ can_signal = []
 SOF = False
 NEGEDGE = False
 negedge_q = queue.Queue()
-negedge_list = [[]]
+negedge_list = []
 prev_can_signal_len = -1
 
 with open(sys.argv[1]) as f:
@@ -54,25 +65,34 @@ with open(sys.argv[1]) as f:
                 if NEGEDGE == True:
                     negedge_term += 1
                 if negedge_term >= 50:
-                    negedge_list.append(list(negedge_q.queue))
                     for q_item in negedge_q.queue:
-                        print("Negedge Edge: ", q_item, len(can_signal))
+                        negedge_list.append(q_item)
+                        #print("Negedge Edge: ", q_item, len(can_signal))
                     NEGEDGE = False
                     negedge_term = 0
                     negedge_q.empty()
-                    print("=================================")
+                    #print("=================================")
             except IndexError :
                 continue
 
-print(len(negedge_list))
-for negedge in negedge_list:
-    print('{:.4f}'.format(mean(negedge)),\
-          '{:.4f}'.format(stdev(negedge)),\
-          '{:.4f}'.format(variance(negedge)),\
-          '{:.4f}'.format(skew(negedge)),\
-          '{:.4f}'.format(kurtosis(negedge)),\
-          '{:.4f}'.format(max(negedge)),\
-          '{:.4f}'.format(min(negedge)),\
-          '{:.4f}'.format(rms(negedge)),\
-          '{:.4f}'.format(en(negedge)),\
-    )
+# feature extraction
+fft_negedge_list = abs(np.fft.fft(negedge_list))
+print('{:.4f}'.format(mean(negedge_list)),\
+      '{:.4f}'.format(stdev(negedge_list)),\
+      '{:.4f}'.format(variance(negedge_list)),\
+      '{:.4f}'.format(skew(negedge_list)),\
+      '{:.4f}'.format(kurtosis(negedge_list)),\
+      '{:.4f}'.format(max(negedge_list)),\
+      '{:.4f}'.format(min(negedge_list)),\
+      '{:.4f}'.format(rms(negedge_list)),\
+      '{:.4f}'.format(en(negedge_list)),\
+      '{:.4f}'.format(mean(negedge_list)),\
+      '{:.4f}'.format(stdev(fft_negedge_list)),\
+      '{:.4f}'.format(variance(fft_negedge_list)),\
+      '{:.4f}'.format(skew(fft_negedge_list)),\
+      '{:.4f}'.format(kurtosis(fft_negedge_list)),\
+      '{:.4f}'.format(max(fft_negedge_list)),\
+      '{:.4f}'.format(min(fft_negedge_list)),\
+      '{:.4f}'.format(rms(fft_negedge_list)),\
+      '{:.4f}'.format(en(fft_negedge_list))
+)
