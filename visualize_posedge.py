@@ -1,16 +1,6 @@
 import csv,sys
 import queue
-from statistics import mean, median, variance, stdev
-from scipy.stats import skew, kurtosis
-from functools import reduce
-from math import sqrt
-import numpy as np
-
-def rms(xs):
-    return sqrt(reduce(lambda a, x: a + x * x, xs, 0) / len(xs))
-
-def en(xs):
-    return reduce(lambda a, x: a + x * x, xs, 0) / len(xs)
+import matplotlib.pyplot as plt
 
 idx = 0
 posedge_term = 0
@@ -21,7 +11,7 @@ can_signal = []
 SOF = False
 POSEDGE = False
 posedge_q = queue.Queue()
-dominant_list = []
+posedge_list = []
 prev_can_signal_len = -1
 
 with open(sys.argv[1]) as f:
@@ -58,16 +48,16 @@ with open(sys.argv[1]) as f:
 
             # extract posedge edge
             try :
-                if posedge_q.queue[-1] - posedge_q.queue[0] >= 0.5 and prev_can_signal_len != len(can_signal) :
+                if posedge_q.queue[-1] - posedge_q.queue[0] >= 0.75 and prev_can_signal_len != len(can_signal) :
                     POSEDGE = True
                     #print(len(can_signal), posedge_q.queue[0], posedge_q.queue[-1])
                     prev_can_signal_len = len(can_signal)
                 if POSEDGE == True:
                     posedge_term += 1
-                if posedge_term >= 350:
+                if posedge_term >= 50:
                     for q_item in posedge_q.queue:
-                        dominant_list.append(q_item)
-                        #print("Dominant signals: ", q_item, len(can_signal))
+                        posedge_list.append(q_item)
+                        #print("Posedge Edge: ", q_item, len(can_signal))
                     POSEDGE = False
                     posedge_term = 0
                     posedge_q.empty()
@@ -75,26 +65,9 @@ with open(sys.argv[1]) as f:
             except IndexError :
                 continue
 
-# label
-#print('mean,stdev,variance,skew,kurtosis,max,min,rms,en,mean_fft,stdev_fft,variance_fft,skew_fft,kurtosis_fft,max_fft,min_fft,rms_fft,en_fft')
-# feature extraction
-fft_dominant_list = abs(np.fft.fft(dominant_list))
-print('{:.4f}'.format(mean(dominant_list)),\
-      '{:.4f}'.format(stdev(dominant_list)),\
-      '{:.4f}'.format(variance(dominant_list)),\
-      '{:.4f}'.format(skew(dominant_list)),\
-      '{:.4f}'.format(kurtosis(dominant_list)),\
-      '{:.4f}'.format(max(dominant_list)),\
-      '{:.4f}'.format(min(dominant_list)),\
-      '{:.4f}'.format(rms(dominant_list)),\
-      '{:.4f}'.format(en(dominant_list)),\
-      '{:.4f}'.format(mean(dominant_list)),\
-      '{:.4f}'.format(stdev(fft_dominant_list)),\
-      '{:.4f}'.format(variance(fft_dominant_list)),\
-      '{:.4f}'.format(skew(fft_dominant_list)),\
-      '{:.4f}'.format(kurtosis(fft_dominant_list)),\
-      '{:.4f}'.format(max(fft_dominant_list)),\
-      '{:.4f}'.format(min(fft_dominant_list)),\
-      '{:.4f}'.format(rms(fft_dominant_list)),\
-      '{:.4f}'.format(en(fft_dominant_list))
-)
+# visualize
+plt.plot(posedge_list)
+plt.ylim(0, 4)
+plt.ylabel('Voltage [V]')
+plt.xlabel('Sample')
+plt.show()

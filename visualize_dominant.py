@@ -1,16 +1,6 @@
 import csv,sys
 import queue
-from statistics import mean, median, variance, stdev
-from scipy.stats import skew, kurtosis
-from functools import reduce
-from math import sqrt
-import numpy as np
-
-def rms(xs):
-    return sqrt(reduce(lambda a, x: a + x * x, xs, 0) / len(xs))
-
-def en(xs):
-    return reduce(lambda a, x: a + x * x, xs, 0) / len(xs)
+import matplotlib.pyplot as plt
 
 idx = 0
 posedge_term = 0
@@ -75,26 +65,9 @@ with open(sys.argv[1]) as f:
             except IndexError :
                 continue
 
-# label
-#print('mean,stdev,variance,skew,kurtosis,max,min,rms,en,mean_fft,stdev_fft,variance_fft,skew_fft,kurtosis_fft,max_fft,min_fft,rms_fft,en_fft')
-# feature extraction
-fft_dominant_list = abs(np.fft.fft(dominant_list))
-print('{:.4f}'.format(mean(dominant_list)),\
-      '{:.4f}'.format(stdev(dominant_list)),\
-      '{:.4f}'.format(variance(dominant_list)),\
-      '{:.4f}'.format(skew(dominant_list)),\
-      '{:.4f}'.format(kurtosis(dominant_list)),\
-      '{:.4f}'.format(max(dominant_list)),\
-      '{:.4f}'.format(min(dominant_list)),\
-      '{:.4f}'.format(rms(dominant_list)),\
-      '{:.4f}'.format(en(dominant_list)),\
-      '{:.4f}'.format(mean(dominant_list)),\
-      '{:.4f}'.format(stdev(fft_dominant_list)),\
-      '{:.4f}'.format(variance(fft_dominant_list)),\
-      '{:.4f}'.format(skew(fft_dominant_list)),\
-      '{:.4f}'.format(kurtosis(fft_dominant_list)),\
-      '{:.4f}'.format(max(fft_dominant_list)),\
-      '{:.4f}'.format(min(fft_dominant_list)),\
-      '{:.4f}'.format(rms(fft_dominant_list)),\
-      '{:.4f}'.format(en(fft_dominant_list))
-)
+# visualize
+plt.plot(dominant_list)
+plt.ylim(0, 4)
+plt.ylabel('Voltage [V]')
+plt.xlabel('Sample')
+plt.show()
