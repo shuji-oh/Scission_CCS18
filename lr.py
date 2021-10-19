@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-from sklearn import datasets
 from sklearn.linear_model import LogisticRegression
 import numpy as np
 import seaborn as sns
