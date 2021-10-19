@@ -10,6 +10,7 @@ can_signal = []
 SOF = False
 NEGEDGE = False
 negedge_q = queue.Queue()
+negedge_list = [[]]
 prev_can_signal_len = -1
 
 with open(sys.argv[1]) as f:
@@ -48,11 +49,12 @@ with open(sys.argv[1]) as f:
             try :
                 if negedge_q.queue[0] - negedge_q.queue[-1] >= 0.5 and prev_can_signal_len != len(can_signal) :
                     NEGEDGE = True
-                    #print(len(can_signal), posedge_q.queue[0], posedge_q.queue[-1])
+                    #print(len(can_signal), negedge_q.queue[0], negedge_q.queue[-1])
                     prev_can_signal_len = len(can_signal)
                 if NEGEDGE == True:
                     negedge_term += 1
                 if negedge_term >= 50:
+                    negedge_list.append(list(negedge_q.queue))
                     for q_item in negedge_q.queue:
                         print("Negedge Edge: ", q_item, len(can_signal))
                     NEGEDGE = False
@@ -62,4 +64,15 @@ with open(sys.argv[1]) as f:
             except IndexError :
                 continue
 
-#print(can_signal[0:115], len(can_signal[0:115]))
+print(len(negedge_list))
+for negedge in negedge_list:
+    print('{:.4f}'.format(mean(negedge)),\
+          '{:.4f}'.format(stdev(negedge)),\
+          '{:.4f}'.format(variance(negedge)),\
+          '{:.4f}'.format(skew(negedge)),\
+          '{:.4f}'.format(kurtosis(negedge)),\
+          '{:.4f}'.format(max(negedge)),\
+          '{:.4f}'.format(min(negedge)),\
+          '{:.4f}'.format(rms(negedge)),\
+          '{:.4f}'.format(en(negedge)),\
+    )
