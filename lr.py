@@ -45,7 +45,7 @@ def main():
     # plot
     X_combined = np.vstack((X_train, X_test))
     y_combined = np.hstack((Y_train, Y_test))
-    df = pd.DataFrame(NC, index=['ECU0', 'ECU1', 'ECU2', 'ECU3', 'ECU4', 'ECU5', 'ECU6'], columns=['ECU0', 'ECU1', 'ECU2', 'ECU3', 'ECU4', 'ECU5', 'ECU6'])
+    df = pd.DataFrame(NC, index=['ECU1', 'ECU2', 'ECU3', 'ECU4', 'ECU5', 'ECU6'], columns=['ECU1', 'ECU2', 'ECU3', 'ECU4', 'ECU5', 'ECU6'])
     fig = plt.figure()
     sns.heatmap(df, cmap="Greens", annot=True, fmt=".4f")
     plt.yticks(rotation=0)
