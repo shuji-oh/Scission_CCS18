@@ -86,7 +86,7 @@ print('{:.4f}'.format(mean(posedge_list)),\
       '{:.4f}'.format(min(posedge_list)),\
       '{:.4f}'.format(rms(posedge_list)),\
       '{:.4f}'.format(en(posedge_list)),\
-      '{:.4f}'.format(mean(posedge_list)),\
+      '{:.4f}'.format(mean(fft_posedge_list)),\
       '{:.4f}'.format(stdev(fft_posedge_list)),\
       '{:.4f}'.format(variance(fft_posedge_list)),\
       '{:.4f}'.format(skew(fft_posedge_list)),\

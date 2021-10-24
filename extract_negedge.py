@@ -86,7 +86,7 @@ print('{:.4f}'.format(mean(negedge_list)),\
       '{:.4f}'.format(min(negedge_list)),\
       '{:.4f}'.format(rms(negedge_list)),\
       '{:.4f}'.format(en(negedge_list)),\
-      '{:.4f}'.format(mean(negedge_list)),\
+      '{:.4f}'.format(mean(fft_negedge_list)),\
       '{:.4f}'.format(stdev(fft_negedge_list)),\
       '{:.4f}'.format(variance(fft_negedge_list)),\
       '{:.4f}'.format(skew(fft_negedge_list)),\

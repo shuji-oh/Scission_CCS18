@@ -88,7 +88,7 @@ print('{:.4f}'.format(mean(dominant_list)),\
       '{:.4f}'.format(min(dominant_list)),\
       '{:.4f}'.format(rms(dominant_list)),\
       '{:.4f}'.format(en(dominant_list)),\
-      '{:.4f}'.format(mean(dominant_list)),\
+      '{:.4f}'.format(mean(fft_dominant_list)),\
       '{:.4f}'.format(stdev(fft_dominant_list)),\
       '{:.4f}'.format(variance(fft_dominant_list)),\
       '{:.4f}'.format(skew(fft_dominant_list)),\
