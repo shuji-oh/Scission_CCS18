@@ -40,9 +40,9 @@ with open(sys.argv[1]) as f:
         if v_value >= threshold :
             #print(v_value)
             SOF = True
-            can_dom_bit_idx += 1
+            can_dom_bit_idx += 2
         elif SOF == True and v_value < threshold :
-            can_res_bit_idx += 1
+            can_res_bit_idx += 2
         if can_dom_bit_idx == 1000:
             can_signal.append('0')
         elif can_res_bit_idx == 1000:
@@ -52,8 +52,11 @@ with open(sys.argv[1]) as f:
         elif can_dom_bit_idx >= 2000: 
             can_dom_bit_idx = 0
 
+        if idx % 32 != 0:
+            continue
+
         posedge_q.put(v_value)
-        if posedge_q.qsize() > 200:
+        if posedge_q.qsize() > 10:
             posedge_q.get()
 
             # extract posedge edge
@@ -64,7 +67,7 @@ with open(sys.argv[1]) as f:
                     prev_can_signal_len = len(can_signal)
                 if POSEDGE == True:
                     posedge_term += 1
-                if posedge_term >= 350:
+                if posedge_term >= 15:
                     for q_item in posedge_q.queue:
                         dominant_list.append(q_item)
                         #print("Dominant signals: ", q_item, len(can_signal))
@@ -108,9 +111,9 @@ with open(sys.argv[1]) as f:
         if v_value >= threshold :
             #print(v_value)
             SOF = True
-            can_dom_bit_idx += 1
+            can_dom_bit_idx += 2
         elif SOF == True and v_value < threshold :
-            can_res_bit_idx += 1
+            can_res_bit_idx += 2
         if can_dom_bit_idx == 1000:
             can_signal.append('0')
         elif can_res_bit_idx == 1000:
@@ -120,8 +123,11 @@ with open(sys.argv[1]) as f:
         elif can_dom_bit_idx >= 2000: 
             can_dom_bit_idx = 0
 
+        if idx % 32 != 0:
+            continue
+
         posedge_q.put(v_value)
-        if posedge_q.qsize() > 200:
+        if posedge_q.qsize() > 10:
             posedge_q.get()
 
             # extract posedge edge
@@ -132,7 +138,7 @@ with open(sys.argv[1]) as f:
                     prev_can_signal_len = len(can_signal)
                 if POSEDGE == True:
                     posedge_term += 1
-                if posedge_term >= 50:
+                if posedge_term >= 5:
                     for q_item in posedge_q.queue:
                         posedge_list.append(q_item)
                         #print("Posedge Edge: ", q_item, len(can_signal))
@@ -174,9 +180,9 @@ with open(sys.argv[1]) as f:
         if v_value >= threshold :
             #print(v_value)
             SOF = True
-            can_dom_bit_idx += 1
+            can_dom_bit_idx += 2
         elif SOF == True and v_value < threshold :
-            can_res_bit_idx += 1
+            can_res_bit_idx += 2
         if can_dom_bit_idx == 1000:
             can_signal.append('0')
         elif can_res_bit_idx == 1000:
@@ -186,8 +192,11 @@ with open(sys.argv[1]) as f:
         elif can_dom_bit_idx >= 2000: 
             can_dom_bit_idx = 0
 
+        if idx % 32 != 0:
+            continue
+
         negedge_q.put(v_value)
-        if negedge_q.qsize() > 200:
+        if negedge_q.qsize() > 10:
             negedge_q.get()
 
             # extract negedge edge
@@ -198,7 +207,7 @@ with open(sys.argv[1]) as f:
                     prev_can_signal_len = len(can_signal)
                 if NEGEDGE == True:
                     negedge_term += 1
-                if negedge_term >= 50:
+                if negedge_term >= 5:
                     for q_item in negedge_q.queue:
                         negedge_list.append(q_item)
                         #print("Negedge Edge: ", q_item, len(can_signal))
