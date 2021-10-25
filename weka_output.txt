@@ -1,0 +1,134 @@
+=== Run information ===
+
+Evaluator:    weka.attributeSelection.ReliefFAttributeEval -M -1 -D 1 -K 10
+Search:       weka.attributeSelection.Ranker -T -1.7976931348623157E308 -N -1
+Relation:     voltage
+Instances:    11302
+Attributes:   55
+              mean_G00
+              stdev_G00
+              variance_G00
+              skew_G00
+              kurtosis_G00
+              max_G00
+              min_G00
+              rms_G00
+              en_G00
+              mean_fft_G00
+              stdev_fft_G00
+              variance_fft_G00
+              skew_fft_G00
+              kurtosis_fft_G00
+              max_fft_G00
+              min_fft_G00
+              rms_fft_G00
+              en_fft_G00
+              mean_G01
+              stdev_G01
+              variance_G01
+              skew_G01
+              kurtosis_G01
+              max_G01
+              min_G01
+              rms_G01
+              en_G01
+              mean_fft_G01
+              stdev_fft_G01
+              variance_fft_G01
+              skew_fft_G01
+              kurtosis_fft_G01
+              max_fft_G01
+              min_fft_G01
+              rms_fft_G01
+              en_fft_G01
+              mean_G10
+              stdev_G10
+              variance_G10
+              skew_G10
+              kurtosis_G10
+              max_G10
+              min_G10
+              rms_G10
+              en_G10
+              mean_fft_G10
+              stdev_fft_G10
+              variance_fft_G10
+              skew_fft_G10
+              kurtosis_fft_G10
+              max_fft_G10
+              min_fft_G10
+              rms_fft_G10
+              en_fft_G10
+              label
+Evaluation mode:    evaluate on all training data
+
+
+
+=== Attribute Selection on all input data ===
+
+Search Method:
+	Attribute ranking.
+
+Attribute Evaluator (supervised, Class (nominal): 55 label):
+	ReliefF Ranking Filter
+	Instances sampled: all
+	Number of nearest neighbours (k): 10
+	Equal influence nearest neighbours
+
+Ranked attributes:
+ 0.3526    20 stdev_G01
+ 0.3505    23 kurtosis_G01
+ 0.3364    21 variance_G01
+ 0.2965     9 en_G00
+ 0.2936     8 rms_G00
+ 0.2933     1 mean_G00
+ 0.2893    37 mean_G10
+ 0.2889    45 en_G10
+ 0.2886    44 rms_G10
+ 0.2805    25 min_G01
+ 0.2711    43 min_G10
+ 0.2666    19 mean_G01
+ 0.2626    26 rms_G01
+ 0.2622    27 en_G01
+ 0.2607     6 max_G00
+ 0.2537    42 max_G10
+ 0.2215    46 mean_fft_G10
+ 0.2197    28 mean_fft_G01
+ 0.2194     4 skew_G00
+ 0.2189    38 stdev_G10
+ 0.2145    39 variance_G10
+ 0.2094     5 kurtosis_G00
+ 0.2085     7 min_G00
+ 0.2082    40 skew_G10
+ 0.2029    24 max_G01
+ 0.1888    22 skew_G01
+ 0.1673    41 kurtosis_G10
+ 0.1652    10 mean_fft_G00
+ 0.1276     2 stdev_G00
+ 0.127     32 kurtosis_fft_G01
+ 0.111     33 max_fft_G01
+ 0.1086    31 skew_fft_G01
+ 0.1057    54 en_fft_G10
+ 0.1049    48 variance_fft_G10
+ 0.1034    50 kurtosis_fft_G10
+ 0.0997    51 max_fft_G10
+ 0.0989    36 en_fft_G01
+ 0.0975    30 variance_fft_G01
+ 0.0972    53 rms_fft_G10
+ 0.0962    47 stdev_fft_G10
+ 0.0898    49 skew_fft_G10
+ 0.0894    35 rms_fft_G01
+ 0.0881    29 stdev_fft_G01
+ 0.082      3 variance_G00
+ 0.0816    14 kurtosis_fft_G00
+ 0.0741    18 en_fft_G00
+ 0.074     12 variance_fft_G00
+ 0.0738    15 max_fft_G00
+ 0.0686    13 skew_fft_G00
+ 0.0645    17 rms_fft_G00
+ 0.0644    11 stdev_fft_G00
+ 0.0217    16 min_fft_G00
+ 0.0216    52 min_fft_G10
+ 0.0189    34 min_fft_G01
+
+Selected attributes: 20,23,21,9,8,1,37,45,44,25,43,19,26,27,6,42,46,28,4,38,39,5,7,40,24,22,41,10,2,32,33,31,54,48,50,51,36,30,53,47,49,35,29,3,14,18,12,15,13,17,11,16,52,34 : 54
