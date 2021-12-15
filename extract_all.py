@@ -3,7 +3,7 @@ import queue
 from statistics import mean, median, variance, stdev
 from scipy.stats import skew, kurtosis
 from functools import reduce
-from math import sqrt
+from math import sqrt,floor,ceil
 import numpy as np
 
 def rms(xs):
@@ -23,6 +23,11 @@ POSEDGE = False
 posedge_q = queue.Queue()
 dominant_list = []
 prev_can_signal_len = -1
+sampling_rate = int(sys.argv[2])
+skip_duration = floor(float(1/sampling_rate)*1000/2)
+queue_length = ceil(sampling_rate/2.0)+1
+buffering_term = floor((sampling_rate/2.0+1)/2)
+dominant_buffering_term = 0 if sampling_rate==1 else ceil((sampling_rate/2.0+1)*1.5)
 
 with open(sys.argv[1]) as f:
     while True:
@@ -52,11 +57,11 @@ with open(sys.argv[1]) as f:
         elif can_dom_bit_idx >= 2000: 
             can_dom_bit_idx = 0
 
-        if idx % 32 != 0:
+        if idx % skip_duration != 0:
             continue
 
         posedge_q.put(v_value)
-        if posedge_q.qsize() > 10:
+        if posedge_q.qsize() > queue_length:
             posedge_q.get()
 
             # extract posedge edge
@@ -67,10 +72,14 @@ with open(sys.argv[1]) as f:
                     prev_can_signal_len = len(can_signal)
                 if POSEDGE == True:
                     posedge_term += 1
-                if posedge_term >= 15:
-                    for q_item in posedge_q.queue:
-                        dominant_list.append(q_item)
+                if posedge_term >= dominant_buffering_term and POSEDGE == True:
+                    if sampling_rate==1:
+                        dominant_list.append(posedge_q.queue[-1])
                         #print("Dominant signals: ", q_item, len(can_signal))
+                    else:
+                        for q_item in posedge_q.queue:
+                            dominant_list.append(q_item)
+                            #print("Dominant signals: ", q_item, len(can_signal))
                     POSEDGE = False
                     posedge_term = 0
                     posedge_q.empty()
@@ -123,11 +132,11 @@ with open(sys.argv[1]) as f:
         elif can_dom_bit_idx >= 2000: 
             can_dom_bit_idx = 0
 
-        if idx % 32 != 0:
+        if idx % skip_duration != 0:
             continue
 
         posedge_q.put(v_value)
-        if posedge_q.qsize() > 10:
+        if posedge_q.qsize() > queue_length:
             posedge_q.get()
 
             # extract posedge edge
@@ -138,7 +147,7 @@ with open(sys.argv[1]) as f:
                     prev_can_signal_len = len(can_signal)
                 if POSEDGE == True:
                     posedge_term += 1
-                if posedge_term >= 5:
+                if posedge_term >= buffering_term and POSEDGE == True:
                     for q_item in posedge_q.queue:
                         posedge_list.append(q_item)
                         #print("Posedge Edge: ", q_item, len(can_signal))
@@ -192,11 +201,11 @@ with open(sys.argv[1]) as f:
         elif can_dom_bit_idx >= 2000: 
             can_dom_bit_idx = 0
 
-        if idx % 32 != 0:
+        if idx % skip_duration != 0:
             continue
 
         negedge_q.put(v_value)
-        if negedge_q.qsize() > 10:
+        if negedge_q.qsize() > queue_length:
             negedge_q.get()
 
             # extract negedge edge
@@ -207,7 +216,7 @@ with open(sys.argv[1]) as f:
                     prev_can_signal_len = len(can_signal)
                 if NEGEDGE == True:
                     negedge_term += 1
-                if negedge_term >= 5:
+                if negedge_term >= buffering_term and NEGEDGE == True:
                     for q_item in negedge_q.queue:
                         negedge_list.append(q_item)
                         #print("Negedge Edge: ", q_item, len(can_signal))
@@ -277,5 +286,5 @@ print('{:.4f}'.format(mean(dominant_list)),\
       '{:.4f}'.format(min(fft_posedge_list)),\
       '{:.4f}'.format(rms(fft_posedge_list)),\
       '{:.4f}'.format(en(fft_posedge_list)),\
-      sys.argv[2],sep=','
+      sys.argv[3],sep=','
 )
