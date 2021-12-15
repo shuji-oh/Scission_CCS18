@@ -3,7 +3,7 @@ import queue
 from statistics import mean, median, variance, stdev
 from scipy.stats import skew, kurtosis
 from functools import reduce
-from math import sqrt
+from math import sqrt,floor,ceil
 import numpy as np
 
 def rms(xs):
@@ -23,6 +23,16 @@ NEGEDGE = False
 negedge_q = queue.Queue()
 negedge_list = []
 prev_can_signal_len = -1
+sampling_rate = int(sys.argv[2])
+
+#print(sampling_rate, 'MS/s')
+#print(floor(float(1/sampling_rate)*1000), 'ns resolution')
+skip_duration = floor(float(1/sampling_rate)*1000/2)
+#print(skip_duration, 'skip duration')
+queue_length = ceil(sampling_rate/2.0)+1
+#print(queue_length, 'queue length')
+buffering_term = floor((sampling_rate/2.0+1)/2)
+#print(buffering_term, 'buffering term')
 
 with open(sys.argv[1]) as f:
     while True:
@@ -52,11 +62,11 @@ with open(sys.argv[1]) as f:
         elif can_dom_bit_idx >= 2000: 
             can_dom_bit_idx = 0
         
-        if idx % 32 != 0:
+        if idx % skip_duration != 0:
             continue
 
         negedge_q.put(v_value)
-        if negedge_q.qsize() > 10:
+        if negedge_q.qsize() > queue_length:
             negedge_q.get()
 
             # extract negedge edge
@@ -67,7 +77,7 @@ with open(sys.argv[1]) as f:
                     prev_can_signal_len = len(can_signal)
                 if NEGEDGE == True:
                     negedge_term += 1
-                if negedge_term >= 5:
+                if negedge_term >= buffering_term and NEGEDGE == True:
                     for q_item in negedge_q.queue:
                         negedge_list.append(q_item)
                         #print("Negedge Edge: ", q_item, len(can_signal))

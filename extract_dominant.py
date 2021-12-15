@@ -3,7 +3,7 @@ import queue
 from statistics import mean, median, variance, stdev
 from scipy.stats import skew, kurtosis
 from functools import reduce
-from math import sqrt
+from math import sqrt,floor,ceil
 import numpy as np
 
 def rms(xs):
@@ -23,6 +23,16 @@ POSEDGE = False
 posedge_q = queue.Queue()
 dominant_list = []
 prev_can_signal_len = -1
+sampling_rate = int(sys.argv[2])
+
+#print(sampling_rate, 'MS/s')
+#print(floor(float(1/sampling_rate)*1000), 'ns resolution')
+skip_duration = floor(float(1/sampling_rate)*1000/2)
+#print(skip_duration, 'skip duration')
+queue_length = ceil(sampling_rate/2.0)+1
+#print(queue_length, 'queue length')
+buffering_term = 0 if sampling_rate==1 else ceil((sampling_rate/2.0+1)*1.5)
+#print(buffering_term, 'buffering term')
 
 with open(sys.argv[1]) as f:
     while True:
@@ -52,11 +62,11 @@ with open(sys.argv[1]) as f:
         elif can_dom_bit_idx >= 2000: 
             can_dom_bit_idx = 0
 
-        if idx % 32 != 0:
+        if idx % skip_duration != 0:
             continue
 
         posedge_q.put(v_value)
-        if posedge_q.qsize() > 10:
+        if posedge_q.qsize() > queue_length:
             posedge_q.get()
 
             # extract posedge edge
@@ -67,10 +77,14 @@ with open(sys.argv[1]) as f:
                     prev_can_signal_len = len(can_signal)
                 if POSEDGE == True:
                     posedge_term += 1
-                if posedge_term >= 15:
-                    for q_item in posedge_q.queue:
-                        dominant_list.append(q_item)
-                        #print("Dominant signals: ", q_item, len(can_signal))
+                if posedge_term >= buffering_term and POSEDGE == True:
+                    if sampling_rate==1:
+                        dominant_list.append(posedge_q.queue[-1])
+                        #print("Dominant signals: ", posedge_q.queue[-1], len(can_signal))
+                    else:
+                        for q_item in posedge_q.queue:
+                            dominant_list.append(q_item)
+                            #print("Dominant signals: ", q_item, len(can_signal))
                     POSEDGE = False
                     posedge_term = 0
                     posedge_q.empty()
